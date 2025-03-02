@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        function startPayment() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var name = urlParams.get("name");
+            var email = urlParams.get("email");
+
+            var options = {
+                "key": "rzp_test_9TwZt9Ncthd9lo", // Razorpay Key ID
+                "amount": "10000", // ₹100 in paise
+                "currency": "INR",
+                "name": "VKShetRa",
+                "description": "Course Payment",
+                "handler": function (response) {
+                    alert("Payment Successful! ID: " + response.razorpay_payment_id);
+
+                    // Save Payment Success in Google Form
+                    var googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSc65CtogWZq1hdp_bvwiuGyWEmgSax-5TFHhTJz4dE_D7EEGQ/formResponse?"
+                        + "entry.123456789=" + encodeURIComponent(name)
+                        + "&entry.987654321=" + encodeURIComponent(email)
+                        + "&entry.999999999=Yes" // Payment Success Field (Replace entry ID)
+                        + "&submit=Submit";
+
+                    fetch(googleFormURL, { method: "POST", mode: "no-cors" });
+
+                    // Redirect to Success Page
+                    window.location.href = "paymnts.html?email=" + encodeURIComponent(email);
+                },
+                "prefill": {
+                    "name": name,
+                    "email": email
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        }
+    </script>
+</head>
+<body onload="startPayment()">
+    <h2>Processing Payment...</h2>
+</body>
+</html>
